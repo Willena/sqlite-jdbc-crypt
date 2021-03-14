@@ -5,7 +5,7 @@ RESOURCE_DIR = src/main/resources
 
 .phony: all package native native-all deploy
 
-all: jni-header package
+all: setversion jni-header package
 
 deploy: setversion
 	mvn package deploy -DperformRelease=true --settings settings.xml
