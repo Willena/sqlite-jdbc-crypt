@@ -217,7 +217,7 @@ public class SQLiteConfig {
             if (pragmaTable.containsKey(Pragma.PASSWORD.pragmaName) || pragmaTable.containsKey(Pragma.KEY.pragmaName)) {
 
                 String password = pragmaTable.getProperty(Pragma.KEY.pragmaName);
-                password = password.isEmpty() ? pragmaTable.getProperty(Pragma.PASSWORD.pragmaName) : password;
+                password = password == null || password.isEmpty() ? pragmaTable.getProperty(Pragma.PASSWORD.pragmaName) : password;
 
                 String cipherName = pragmaTable.getProperty(Pragma.CIPHER.pragmaName);
 
