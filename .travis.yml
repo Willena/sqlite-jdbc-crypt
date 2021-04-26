@@ -1,6 +1,6 @@
 sudo: required
 os: linux
-dist: trusty
+dist: bionic
 services:
   - docker
   
