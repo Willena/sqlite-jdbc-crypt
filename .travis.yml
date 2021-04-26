@@ -20,7 +20,8 @@ jobs:
 install:
   - mkdir -p /tmp/willena/
   - openssl aes-256-cbc -K $encrypted_0e6f4e1fcef0_key -iv $encrypted_0e6f4e1fcef0_iv -in /home/travis/build/Willena/sqlite-jdbc-crypt/scripts/private.key.enc -out /tmp/willena/private.key -d
-  - gpg --import /tmp/willena/private.key
+  - gpg --version
+  - gpg --batch --import /tmp/willena/private.key
   - rm /tmp/willena/private.key
 before_install:
   - sudo apt-get update
