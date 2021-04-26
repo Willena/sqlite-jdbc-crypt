@@ -6,7 +6,7 @@ services:
   
 language: java
 jdk:
-  - oraclejdk10
+  - oraclejdk12
 
 jobs:
   include:
