@@ -18,8 +18,7 @@
 #include <string.h>
 #include <assert.h>
 #include "NativeDB.h"
-//#include "sqlite3mc.h"
-#include "sqlite3mc_amalgamation.h"
+#include "sqlite3.h"
 
 // Java class variables and method references initialized on library load.
 // These classes are weak references to that if the classloader is no longer referenced (garbage)

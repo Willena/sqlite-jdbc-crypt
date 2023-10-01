@@ -19,7 +19,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
 SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
 SQLITE_UNPACKED:=$(TARGET)/sqlite-unpack.log
 SQLITE_SOURCE?=$(TARGET)/$(SQLITE_AMAL_PREFIX)
-SQLITE_HEADER?=$(SQLITE_SOURCE)/sqlite3mc_amalgamation.h
+SQLITE_HEADER?=$(SQLITE_SOURCE)/sqlite3.h
 ifneq ($(SQLITE_SOURCE),$(TARGET)/$(SQLITE_AMAL_PREFIX))
 	created := $(shell touch $(SQLITE_UNPACKED))
 endif
@@ -37,15 +37,13 @@ BUILDER_GROUP:="$(shell id -gn )"
 $(SQLITE_ARCHIVE):
 	echo "Downloading Archive"
 	mkdir -p $(TARGET)
-	#curl -s https://api.github.com/repos/utelle/SQLite3MultipleCiphers/releases | jq -r ".[].assets[] | select(.name | contains(\"$(version)-amalgamation\")) | .created_at |= fromdateiso8601 | .browser_download_url" | head -1 | wget -O $@ -i -
-	#wget -O $@ https://github.com/utelle/SQLite3MultipleCiphers/releases/download/v$(sqliteMCVersion)/sqlite3mc-$(sqliteMCVersion)-sqlite-$(version)-amalgamation.zip
 	curl -SL "https://github.com/utelle/SQLite3MultipleCiphers/releases/download/v$(sqliteMCVersion)/sqlite3mc-$(sqliteMCVersion)-sqlite-$(version)-amalgamation.zip" >  $@
-	#if [ ! -d "$(TARGET)/$(version)" ] ; then git clone https://github.com/utelle/SQLite3MultipleCiphers.git $(TARGET)/$(version); cd $(TARGET)/$(version); fi
 	@mkdir -p $(@D)
 
 $(SQLITE_UNPACKED): $(SQLITE_ARCHIVE)
 	unzip -qo $< -d $(TARGET)/$(version)
 	if [ -d "$(TARGET)/$(version)" ] ; then mv $(TARGET)/$(version) $(TARGET)/$(SQLITE_AMAL_PREFIX);fi
+
 	touch $@
 
 
@@ -71,16 +69,14 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
 	cp $(TARGET)/$(SQLITE_AMAL_PREFIX)/* $(SQLITE_OUT)/
 
 
-#	perl -p -e "s/sqlite3_api;/sqlite3_api = 0;/g" \
-	    $(SQLITE_SOURCE)/sqlite3ext.h > $(SQLITE_OUT)/sqlite3ext.h
+#	perl -p -e "s/sqlite3_api;/sqlite3_api = 0;/g" $(SQLITE_SOURCE)/sqlite3ext.h > $(SQLITE_OUT)/sqlite3ext.h
 # insert a code for loading extension functions
-#	perl -p -e "s/^opendb_out:/  if(!db->mallocFailed && rc==SQLITE_OK){ rc = RegisterExtensionFunctions(db); }\nopendb_out:/;" \
-	    $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c > $(SQLITE_OUT)/sqlite3mc_amalgamation.c.tmp
+#	perl -p -e "s/^opendb_out:/  if(!db->mallocFailed && rc==SQLITE_OK){ rc = RegisterExtensionFunctions(db); }\nopendb_out:/;" $(SQLITE_SOURCE)/sqlite3.c > $(SQLITE_OUT)/sqlite3.c.tmp
 # register compile option 'JDBC_EXTENSIONS'
 # limits defined here: https://www.sqlite.org/limits.html
 #	perl -p -e "s/^(static const char \* const sqlite3azCompileOpt.+)$$/\1\n\n\/* This has been automatically added by sqlite-jdbc *\/\n  \"JDBC_EXTENSIONS\",/;" \
-	    $(SQLITE_OUT)/sqlite3mc_amalgamation.c.tmp > $(SQLITE_OUT)/sqlite3mc_amalgamation.c
-#	cat src/main/ext/*.c >> $(SQLITE_OUT)/sqlite3mc_amalgamation.c
+	    $(SQLITE_OUT)/sqlite3.c.tmp > $(SQLITE_OUT)/sqlite3.c
+#	cat src/main/ext/*.c >> $(SQLITE_OUT)/sqlite3.c
 
 	$(CC) -v
 
@@ -129,9 +125,15 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
 	-DSQLITE_USER_AUTHENTICATION=1 \
 	-DNDEBUG \
 	$(SQLITE_FLAGS) \
-	$(SQLITE_OUT)/sqlite3mc_amalgamation.c
+	$(SQLITE_OUT)/sqlite3.c
 
-$(SQLITE_SOURCE)/sqlite3mc_amalgamation.h: $(SQLITE_UNPACKED)
+$(SQLITE_SOURCE)/sqlite3.h: $(SQLITE_UNPACKED)
+	# Reference an external amalgamation while using sqlitemc
+	test -f $(SQLITE_SOURCE)/sqlite3mc_amalgamation.h && mv $(SQLITE_SOURCE)/sqlite3mc_amalgamation.h $(SQLITE_SOURCE)/sqlite3.h
+
+$(SQLITE_SOURCE)/sqlite3.h: $(SQLITE_UNPACKED)
+	# Reference an external amalgamation while using sqlitemc
+	test -f $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c && mv $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c $(SQLITE_SOURCE)/sqlite3.c
 
 $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
 	@mkdir -p $(@D)
