@@ -10,8 +10,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteConfig;
 
+@DisabledIfSystemProperty(
+        disabledReason = "SQLite3 binary not compatible with that test",
+        named = "disableCipherTests",
+        matches = "true")
 class SQLiteMCSqlCipherConfigTest {
 
     private static final String unsaltedHexKeyValid =

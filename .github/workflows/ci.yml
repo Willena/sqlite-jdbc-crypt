@@ -99,6 +99,7 @@ jobs:
   test_multiarch:
     name: test ${{ matrix.arch }} ${{ matrix.distro }} jdk${{ matrix.java }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           # ARM v7
@@ -186,7 +187,7 @@ jobs:
         run: |
           make native SQLITE_OBJ=${{ env.SQLITE_DIR }}/lib/libsqlite3.dylib SQLITE_HEADER=${{ env.SQLITE_DIR }}/include/sqlite3.h
       - name: Test
-        run: mvn --batch-mode --no-transfer-progress test
+        run: mvn --batch-mode --no-transfer-progress test -DdisableCipherTests=true
 
 #  release:
 #    name: Deploy

@@ -5,8 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteConfig;
 
+@DisabledIfSystemProperty(
+        disabledReason = "SQLite3 binary not compatible with that test",
+        named = "disableCipherTests",
+        matches = "true")
 class SQLiteMCChacha20ConfigTest {
 
     private static final String unsaltedHexKeyValid =
