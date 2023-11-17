@@ -233,7 +233,7 @@ ifeq ($(wildcard MAC_SDK),)
 	MAC_SDK := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
 endif
 Mac-x86_64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.6 -fvisibility=hidden -msse4.2 -maes -Wno-implicit-function-declaration
-Mac-x86_64_LINKFLAGS := -dynamiclib 
+Mac-x86_64_LINKFLAGS := -dynamiclib -framework Security
 Mac-x86_64_LIBNAME   := libsqlitejdbc.jnilib
 Mac-x86_64_SQLITE_FLAGS  := 
 
@@ -243,7 +243,7 @@ Mac-aarch64_CC        := $(CROSS_PREFIX)clang
 Mac-aarch64_STRIP     := $(CROSS_PREFIX)strip -x
 MAC_SDK := /usr/osxcross/SDK/MacOSX11.3.sdk
 Mac-aarch64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.9 -fvisibility=hidden -Wno-implicit-function-declaration
-Mac-aarch64_LINKFLAGS  := -dynamiclib
+Mac-aarch64_LINKFLAGS  := -dynamiclib -framework Security
 Mac-aarch64_LIBNAME    := libsqlitejdbc.jnilib
 Mac-aarch64_SQLITE_FLAGS := 
 
@@ -257,7 +257,7 @@ Windows-x86_SQLITE_FLAGS :=
 Windows-x86_64_CC           := $(CROSS_PREFIX)gcc
 Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
 Windows-x86_64_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os -msse4.2 -maes
-Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
+Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc -lquadmath
 Windows-x86_64_LIBNAME      := sqlitejdbc.dll
 Windows-x86_64_SQLITE_FLAGS :=
 
