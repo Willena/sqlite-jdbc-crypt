@@ -16,5 +16,5 @@ atlassian-ide-plugin.xml
 *.so
 *.dll
 *.jnilib
-
+*.dylib
 .fleet/settings.json
