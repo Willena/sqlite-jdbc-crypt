@@ -7,8 +7,13 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.sql.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteException;
 
+@DisabledIfSystemProperty(
+        disabledReason = "SQLite3 binary not compatible with that test",
+        named = "disableCipherTests",
+        matches = "true")
 public class SQLiteMCURIInterfaceTest {
 
     private static final String SQL_TABLE =

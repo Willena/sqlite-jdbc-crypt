@@ -5,10 +5,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.sql.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 public class ParametersTest {
 
     @Test
+    @DisabledIfSystemProperty(
+            disabledReason = "SQLite3 binary not compatible with that test",
+            named = "disableCipherTests",
+            matches = "true")
     public void testSqliteConfigViaStatements() throws Throwable {
         File testDB = File.createTempFile("test.db", "", new File("target"));
         testDB.deleteOnExit();
