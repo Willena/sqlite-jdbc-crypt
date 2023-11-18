@@ -21,13 +21,16 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConnection;
+import org.sqlite.core.CoreDatabaseMetaData;
 import org.sqlite.core.CoreStatement;
 import org.sqlite.jdbc3.JDBC3DatabaseMetaData.ImportedKeyFinder.ForeignKey;
 import org.sqlite.util.QueryUtils;
 import org.sqlite.util.StringUtils;
 
-public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabaseMetaData {
+public abstract class JDBC3DatabaseMetaData extends CoreDatabaseMetaData {
 
     private static String driverName;
     private static String driverVersion;
@@ -556,7 +559,7 @@ public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabase
 
     /** @see java.sql.DatabaseMetaData#supportsGetGeneratedKeys() */
     public boolean supportsGetGeneratedKeys() {
-        return true;
+        return false;
     }
 
     /** @see java.sql.DatabaseMetaData#supportsGroupBy() */
@@ -893,11 +896,12 @@ public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabase
         //        YES --- if the parameter can include NULLs
         //        NO --- if the parameter cannot include NULLs
         //        empty string --- if the nullability for the parameter is unknown
-        //        SCOPE_CATLOG String => catalog of table that is the scope of a reference attribute
+        //        SCOPE_CATALOG String => catalog of table that is the scope of a reference
+        // attribute
         // (null if DATA_TYPE isn't REF)
         //        SCOPE_SCHEMA String => schema of table that is the scope of a reference attribute
         // (null if the DATA_TYPE isn't REF)
-        //        SCOPE_TABLE String => table name that this the scope of a reference attribure
+        //        SCOPE_TABLE String => table name that this the scope of a reference attribute
         // (null if the DATA_TYPE isn't REF)
         //        SOURCE_DATA_TYPE short => source type of a distinct type or user-generated Ref
         // type, SQL type from java.sql.Types (null if DATA_TYPE isn't DISTINCT or user-generated
@@ -960,14 +964,14 @@ public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabase
                         try {
                             rsColAutoinc.close();
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LogHolder.logger.error("Could not close ResultSet", e);
                         }
                     }
                     if (statColAutoinc != null) {
                         try {
                             statColAutoinc.close();
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LogHolder.logger.error("Could not close statement", e);
                         }
                     }
                 }
@@ -1118,7 +1122,7 @@ public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabase
                 try {
                     rs.close();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogHolder.logger.error("Could not close ResultSet", e);
                 }
             }
         }
@@ -1925,15 +1929,12 @@ public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabase
     }
 
     /**
-     * @return Generated row id of the last INSERT command.
-     * @throws SQLException
+     * @deprecated Not exactly sure what this function does, as it is not implementing any
+     *     interface, and is not used anywhere in the code. Deprecated since 3.43.0.0.
      */
+    @Deprecated
     public ResultSet getGeneratedKeys() throws SQLException {
-        if (getGeneratedKeys == null) {
-            getGeneratedKeys = conn.prepareStatement("select last_insert_rowid();");
-        }
-
-        return getGeneratedKeys.executeQuery();
+        throw new SQLFeatureNotSupportedException("not implemented by SQLite JDBC driver");
     }
 
     /** Not implemented yet. */
@@ -2237,5 +2238,13 @@ public abstract class JDBC3DatabaseMetaData extends org.sqlite.core.CoreDatabase
             name = name.substring(1, name.length() - 1);
         }
         return name;
+    }
+
+    /**
+     * Class-wrapper around the logger object to avoid build-time initialization of the logging
+     * framework in native-image
+     */
+    private static class LogHolder {
+        private static final Logger logger = LoggerFactory.getLogger(JDBC3DatabaseMetaData.class);
     }
 }

@@ -11,9 +11,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.9.3</junit.version>
-        <surefire.version>3.1.2</surefire.version>
-        <graalvm.version>22.3.2</graalvm.version>
+        <junit.version>5.10.1</junit.version>
+        <surefire.version>3.2.2</surefire.version>
+        <graalvm.version>23.1.1</graalvm.version>
         <java9.sourceDirectory>${project.basedir}/src/main/java9</java9.sourceDirectory>
     </properties>
 
@@ -196,13 +196,13 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.16.0</version>
+                <version>2.16.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -300,7 +300,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.5.0</version>
+                        <version>3.6.2</version>
                         <configuration>
                             <sourcepath>src/main/java</sourcepath>
                             <additionalOptions>-Xdoclint:none</additionalOptions>
@@ -339,7 +339,7 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>0.9.22</version>
+                        <version>0.9.28</version>
                         <extensions>true</extensions>
                         <executions>
                             <execution>
@@ -390,9 +390,7 @@
                         <artifactId>native-maven-plugin</artifactId>
                         <configuration>
                             <buildArgs combine.children="append">
-                                <buildArg>
-                                    -Dorg.sqlite.lib.exportPath=${project.build.directory}
-                                </buildArg>
+                                <buildArg>-Dorg.sqlite.lib.exportPath=${project.build.directory}</buildArg>
                             </buildArgs>
                         </configuration>
                     </plugin>
@@ -402,6 +400,11 @@
     </profiles>
 
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
         <!--
         This dependency makes compilation on non-GraalVM versions possible.
         The dependency should however never actually be required by end-users because if they require
@@ -409,7 +412,7 @@
         -->
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
-            <artifactId>graal-sdk</artifactId>
+            <artifactId>nativeimage</artifactId>
             <version>${graalvm.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -424,30 +427,40 @@
             <artifactId>assertj-core</artifactId>
             <version>3.24.2</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <!--
+                    assertj bundles an outdated version of byte-buddy.
+                    This exclusion this makes sure the one junit brings in is used.
+                    -->
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
-            <version>2.0.1</version>
+            <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.3.1</version>
+            <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
             <scope>test</scope>
         </dependency>
         <!--   Required by archunit     -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.7</version>
+            <version>1.2.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -8,6 +8,8 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sqlite.ExtendedCommand;
 import org.sqlite.ExtendedCommand.SQLExtension;
 import org.sqlite.SQLiteConnection;
@@ -19,7 +21,7 @@ public abstract class JDBC3Statement extends CoreStatement {
 
     private int queryTimeout; // in seconds, as per the JDBC spec
     protected long updateCount;
-    private boolean exhaustedResults = false;
+    protected boolean exhaustedResults = false;
 
     // PUBLIC INTERFACE /////////////////////////////////////////////
 
@@ -92,8 +94,10 @@ public abstract class JDBC3Statement extends CoreStatement {
     }
 
     static class BackupObserver implements ProgressObserver {
+        private static final Logger logger = LoggerFactory.getLogger(BackupObserver.class);
+
         public void progress(int remaining, int pageCount) {
-            System.out.printf("remaining:%d, page count:%d%n", remaining, pageCount);
+            logger.info("remaining:{}, page count:{}", remaining, pageCount);
         }
     }
 
@@ -347,13 +351,14 @@ public abstract class JDBC3Statement extends CoreStatement {
     }
 
     /**
-     * As SQLite's last_insert_rowid() function is DB-specific not statement specific, this function
-     * introduces a race condition if the same connection is used by two threads and both insert.
+     * SQLite's last_insert_rowid() function is DB-specific, not statement specific, and cannot
+     * provide multiple values when inserting multiple rows. Suggestion is to use a <a
+     * href=https://www.sqlite.org/lang_returning.html>RETURNING</a> clause instead.
      *
      * @see java.sql.Statement#getGeneratedKeys()
      */
     public ResultSet getGeneratedKeys() throws SQLException {
-        return conn.getSQLiteDatabaseMetaData().getGeneratedKeys();
+        throw unsupported();
     }
 
     /**

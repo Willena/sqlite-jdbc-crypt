@@ -291,7 +291,7 @@ public class SQLiteConfig {
     }
 
     /**
-     * Retrives a pragma integer value.
+     * Retrieves a pragma integer value.
      *
      * @param pragma The pragma.
      * @param defaultValue The default value.
@@ -985,7 +985,7 @@ public class SQLiteConfig {
      * @see <a
      *     href="https://www.sqlite.org/pragma.html#pragma_journal_size_limit">www.sqlite.org/pragma.html#pragma_journal_size_limit</a>
      */
-    public void setJounalSizeLimit(int limit) {
+    public void setJournalSizeLimit(int limit) {
         set(Pragma.JOURNAL_SIZE_LIMIT, limit);
     }
 
@@ -1060,14 +1060,14 @@ public class SQLiteConfig {
     }
 
     /**
-     * Enables or disables useReadUncommitedIsolationMode.
+     * Enables or disables useReadUncommittedIsolationMode.
      *
-     * @param useReadUncommitedIsolationMode True to turn on; false to disable. disabled otherwise.
+     * @param useReadUncommittedIsolationMode True to turn on; false to disable. disabled otherwise.
      * @see <a
      *     href="https://www.sqlite.org/pragma.html#pragma_read_uncommitted">www.sqlite.org/pragma.html#pragma_read_uncommitted</a>
      */
-    public void setReadUncommited(boolean useReadUncommitedIsolationMode) {
-        set(Pragma.READ_UNCOMMITTED, useReadUncommitedIsolationMode);
+    public void setReadUncommitted(boolean useReadUncommittedIsolationMode) {
+        set(Pragma.READ_UNCOMMITTED, useReadUncommittedIsolationMode);
     }
 
     /**
@@ -1231,9 +1231,6 @@ public class SQLiteConfig {
     }
 
     public enum TransactionMode implements PragmaValue {
-        /** @deprecated Use {@code DEFERRED} instead. */
-        @Deprecated
-        DEFFERED,
         DEFERRED,
         IMMEDIATE,
         EXCLUSIVE;
@@ -1243,9 +1240,6 @@ public class SQLiteConfig {
         }
 
         public static TransactionMode getMode(String mode) {
-            if ("DEFFERED".equalsIgnoreCase(mode)) {
-                return DEFERRED;
-            }
             return TransactionMode.valueOf(mode.toUpperCase());
         }
     }

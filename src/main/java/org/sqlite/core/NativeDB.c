@@ -285,7 +285,7 @@ static sqlite3_value * tovalue(JNIEnv *env, jobject function, jint arg)
 
     // check we have any business being here
     if (arg  < 0) { throwex_msg(env, "negative arg out of range"); return 0; }
-    if (!function) { throwex_msg(env, "inconstent function"); return 0; }
+    if (!function) { throwex_msg(env, "inconsistent function"); return 0; }
 
     value_pntr = (*env)->GetLongField(env, function, func_value);
     numArgs = (*env)->GetIntField(env, function, func_args);
@@ -296,7 +296,7 @@ static sqlite3_value * tovalue(JNIEnv *env, jobject function, jint arg)
     return ((sqlite3_value**)toref(value_pntr))[arg];
 }
 
-/* called if an exception occured processing xFunc */
+/* called if an exception occurred processing xFunc */
 static void xFunc_error(sqlite3_context *context, JNIEnv *env)
 {
     jstring msg = 0;
@@ -1882,4 +1882,103 @@ JNIEXPORT void JNICALL Java_org_sqlite_core_NativeDB__1close(
         }
         sethandle(env, nativeDB, 0);
     }
+}
+
+JNIEXPORT jbyteArray JNICALL Java_org_sqlite_core_NativeDB_serialize(JNIEnv *env, jobject this, jstring jschema)
+{
+
+   sqlite3 *db = gethandle(env, this);
+   if (!db)
+   {
+        throwex_db_closed(env);
+        return NULL;
+   }
+
+   const char* schema = (*env)->GetStringUTFChars(env, jschema, 0);
+
+   sqlite3_int64 size;
+   int need_free=0;
+   unsigned char *buff = sqlite3_serialize(db, schema, &size, SQLITE_SERIALIZE_NOCOPY);
+   if (buff==NULL)
+   {
+      // This happens if we start without a deserialized database
+      buff = sqlite3_serialize(db, schema, &size, 0);
+      if (buff==NULL)
+      {
+         (*env)->ReleaseStringUTFChars(env, jschema, schema);
+         throwex_msg(env, "Serialization failed, allocation failed");
+	 return NULL;
+      }
+      need_free = 1;
+   }
+   (*env)->ReleaseStringUTFChars(env, jschema, schema);
+
+   jbyteArray jbuff =  (*env)->NewByteArray(env, size);
+   if (jbuff!=NULL) 
+   {
+      void *jbuff_pointer = (*env)->GetPrimitiveArrayCritical(env, jbuff, NULL);
+      if (jbuff_pointer!=NULL)
+      {
+         memcpy(jbuff_pointer, buff, size);
+         (*env)->ReleasePrimitiveArrayCritical(env, jbuff, buff, 0);
+      }
+      else
+      {
+         throwex_msg(env, "Failed to get byte[] address");
+         (*env)->DeleteLocalRef(env, jbuff);
+	 jbuff = NULL;
+      }
+   }
+   else
+   {
+      throwex_msg(env, "Failed to allocate java byte[]");
+   }
+
+
+   if (need_free)
+   {
+      sqlite3_free(buff);
+   }
+   return jbuff;
+}
+
+JNIEXPORT void JNICALL Java_org_sqlite_core_NativeDB_deserialize(JNIEnv *env, jobject this, jstring jschema, jbyteArray jbuff)
+{
+   sqlite3 *db = gethandle(env, this);
+   if (!db)
+   {
+        throwex_db_closed(env);
+        return;
+   }
+
+   jlong size = (*env)->GetArrayLength(env, jbuff);
+   unsigned char *sqlite_buff = sqlite3_malloc64(size);
+   if (sqlite_buff==NULL)
+   {  
+      throwex_msg(env, "Failed to allocate native memory for database");
+      return;
+   }
+
+   void *buff = (*env)->GetPrimitiveArrayCritical(env, jbuff, NULL);
+   if (buff==NULL) 
+   {
+      throwex_msg(env, "Failed to get byte[] address");
+      sqlite3_free(sqlite_buff);
+      return;
+   }
+   memcpy(sqlite_buff, buff, size);
+   (*env)->ReleasePrimitiveArrayCritical(env, jbuff, buff, JNI_ABORT);
+
+   const char* schema = (*env)->GetStringUTFChars(env, jschema, 0);
+   int ret = sqlite3_deserialize(db, schema, sqlite_buff, size, size, SQLITE_DESERIALIZE_FREEONCLOSE | SQLITE_DESERIALIZE_RESIZEABLE);
+   if (ret!=SQLITE_OK) 
+   {
+      throwex_errorcode(env, this, ret);
+   }
+   else
+   {
+   	sqlite3_int64 max_size = 1024L * 1024L * 1000L * 2L; //~2gb, bigger values will result in sqlite malloc error
+   	sqlite3_file_control(db, schema, SQLITE_FCNTL_SIZE_LIMIT, &max_size);
+   }
+   (*env)->ReleaseStringUTFChars(env, jschema, schema);
 }

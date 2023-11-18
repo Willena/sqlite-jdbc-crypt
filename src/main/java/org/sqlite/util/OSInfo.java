@@ -31,6 +31,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides OS name and architecture name.
@@ -63,11 +65,11 @@ public class OSInfo {
         archMapping.put("em64t", X86_64);
         archMapping.put("universal", X86_64); // Needed for openjdk7 in Mac
 
-        // Itenium 64-bit mappings
+        // Itanium 64-bit mappings
         archMapping.put(IA64, IA64);
         archMapping.put("ia64w", IA64);
 
-        // Itenium 32-bit mappings, usually an HP-UX construct
+        // Itanium 32-bit mappings, usually an HP-UX construct
         archMapping.put(IA64_32, IA64_32);
         archMapping.put("ia64n", IA64_32);
 
@@ -158,7 +160,7 @@ public class OSInfo {
         try {
             return processRunner.runAndWaitFor("uname -m");
         } catch (Throwable e) {
-            System.err.println("Error while running uname -m: " + e.getMessage());
+            LogHolder.logger.error("Error while running uname -m", e);
             return "unknown";
         }
     }
@@ -200,7 +202,7 @@ public class OSInfo {
                 return "armv7";
             }
 
-            // For java7, we stil need to if run some shell commands to determine ABI of JVM
+            // For java7, we still need to run some shell commands to determine ABI of JVM
             String javaHome = System.getProperty("java.home");
             try {
                 // determine if first JVM found uses ARM hard-float ABI
@@ -219,8 +221,8 @@ public class OSInfo {
                         return "armv7";
                     }
                 } else {
-                    System.err.println(
-                            "WARNING! readelf not found. Cannot check if running on an armhf system, armel architecture will be presumed.");
+                    LogHolder.logger.warn(
+                            "readelf not found. Cannot check if running on an armhf system, armel architecture will be presumed");
                 }
             } catch (IOException | InterruptedException e) {
                 // ignored: fall back to "arm" arch (soft-float ABI)
@@ -267,5 +269,13 @@ public class OSInfo {
 
     static String translateArchNameToFolderName(String archName) {
         return archName.replaceAll("\\W", "");
+    }
+
+    /**
+     * Class-wrapper around the logger object to avoid build-time initialization of the logging
+     * framework in native-image
+     */
+    private static class LogHolder {
+        private static final Logger logger = LoggerFactory.getLogger(OSInfo.class);
     }
 }
