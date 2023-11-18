@@ -63,15 +63,15 @@ test:
 
 clean: clean-target clean-native clean-java clean-tests
 
-$(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+$(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED) $(SQLITE_SOURCE)/sqlite3.c $(SQLITE_SOURCE)/sqlite3.h
 	id
 	@mkdir -p $(@D)
-	cp $(TARGET)/$(SQLITE_AMAL_PREFIX)/* $(SQLITE_OUT)/
+	cp $(SQLITE_SOURCE)/* $(SQLITE_OUT)/
 
     # Temporary workaround for quadmath on Windows ARM64
 	perl -p -e "s/#if defined\(__GNUC__\) && defined\(_WIN64\)/#if defined(__GNUC__) && defined(_WIN64) && defined(__x86_64__)/;" \
-	    $(SQLITE_OUT)/sqlite3mc_amalgamation.c > $(SQLITE_OUT)/sqlite3mc_amalgamation.c.tmp
-	cat $(SQLITE_OUT)/sqlite3mc_amalgamation.c.tmp > $(SQLITE_OUT)/sqlite3mc_amalgamation.c
+	    $(SQLITE_OUT)/sqlite3.c > $(SQLITE_OUT)/sqlite3.c.tmp
+	cat $(SQLITE_OUT)/sqlite3.c.tmp > $(SQLITE_OUT)/sqlite3.c
 
 
 #	perl -p -e "s/sqlite3_api;/sqlite3_api = 0;/g" $(SQLITE_SOURCE)/sqlite3ext.h > $(SQLITE_OUT)/sqlite3ext.h
@@ -134,11 +134,11 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
 
 $(SQLITE_SOURCE)/sqlite3.h: $(SQLITE_UNPACKED)
 	# Reference an external amalgamation while using sqlitemc
-	test -f $(SQLITE_SOURCE)/sqlite3mc_amalgamation.h && mv $(SQLITE_SOURCE)/sqlite3mc_amalgamation.h $(SQLITE_SOURCE)/sqlite3.h
+	if [ -f $(SQLITE_SOURCE)/sqlite3mc_amalgamation.h ]; then mv $(SQLITE_SOURCE)/sqlite3mc_amalgamation.h $(SQLITE_SOURCE)/sqlite3.h; fi
 
-$(SQLITE_SOURCE)/sqlite3.h: $(SQLITE_UNPACKED)
+$(SQLITE_SOURCE)/sqlite3.c: $(SQLITE_UNPACKED)
 	# Reference an external amalgamation while using sqlitemc
-	test -f $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c && mv $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c $(SQLITE_SOURCE)/sqlite3.c
+	if [ -f $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c ]; then mv $(SQLITE_SOURCE)/sqlite3mc_amalgamation.c $(SQLITE_SOURCE)/sqlite3.c; fi
 
 $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
 	@mkdir -p $(@D)
