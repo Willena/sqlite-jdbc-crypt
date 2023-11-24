@@ -72,12 +72,6 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED) $(SQLITE_SOURCE)/sqlite3.c $(SQLITE
 	@mkdir -p $(@D)
 	cp $(SQLITE_SOURCE)/* $(SQLITE_OUT)/
 
-    # Temporary workaround for quadmath on Windows ARM64
-	perl -p -e "s/#if defined\(__GNUC__\) && defined\(_WIN64\)/#if defined(__GNUC__) && defined(_WIN64) && defined(__x86_64__)/;" \
-	    $(SQLITE_OUT)/sqlite3.c > $(SQLITE_OUT)/sqlite3.c.tmp
-	cat $(SQLITE_OUT)/sqlite3.c.tmp > $(SQLITE_OUT)/sqlite3.c
-
-
 #	perl -p -e "s/sqlite3_api;/sqlite3_api = 0;/g" $(SQLITE_SOURCE)/sqlite3ext.h > $(SQLITE_OUT)/sqlite3ext.h
 # insert a code for loading extension functions
 #	perl -p -e "s/^opendb_out:/  if(!db->mallocFailed && rc==SQLITE_OK){ rc = RegisterExtensionFunctions(db); }\nopendb_out:/;" $(SQLITE_SOURCE)/sqlite3.c > $(SQLITE_OUT)/sqlite3.c.tmp

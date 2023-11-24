@@ -261,7 +261,7 @@ Windows-x86_SQLITE_FLAGS :=
 Windows-x86_64_CC           := $(CROSS_PREFIX)gcc
 Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
 Windows-x86_64_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os -msse4.2 -maes
-Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc -lquadmath
+Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
 Windows-x86_64_LIBNAME      := sqlitejdbc.dll
 Windows-x86_64_SQLITE_FLAGS :=
 
