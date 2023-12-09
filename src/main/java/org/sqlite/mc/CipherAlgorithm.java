@@ -5,7 +5,8 @@ public enum CipherAlgorithm {
     RC4("rc4"),
     CHACHA20("chacha20"),
     WX_AES128("aes128cbc"),
-    WX_AES256("aes256cbc");
+    WX_AES256("aes256cbc"),
+    ASCON("ascon128");
 
     private final String cipherName;
 

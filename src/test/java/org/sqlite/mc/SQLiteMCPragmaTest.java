@@ -171,6 +171,11 @@ public class SQLiteMCPragmaTest {
     }
 
     @Test
+    public void ascon128Test() throws IOException,SQLException {
+        genericDatabaseTest(SQLiteMCAscon128Config.getDefault());
+    }
+
+    @Test
     public void defaultCihperDatabaseTest() throws IOException, SQLException {
         genericDatabaseTest(new SQLiteMCConfig.Builder());
     }
