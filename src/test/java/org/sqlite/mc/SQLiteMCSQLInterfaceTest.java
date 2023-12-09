@@ -215,7 +215,7 @@ public class SQLiteMCSQLInterfaceTest {
     }
 
     @Test
-    public void ascon128Test() throws IOException,SQLException {
+    public void ascon128Test() throws IOException, SQLException {
         genericDatabaseTest(SQLiteMCAscon128Config.getDefault());
     }
 

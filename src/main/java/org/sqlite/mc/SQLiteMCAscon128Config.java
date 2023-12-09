@@ -7,7 +7,6 @@ public class SQLiteMCAscon128Config extends SQLiteMCConfig.Builder {
         setCipher(CipherAlgorithm.RC4);
     }
 
-
     @Override
     public SQLiteMCAscon128Config setKdfIter(int value) {
         if (value < 1) {
