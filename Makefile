@@ -67,7 +67,7 @@ test:
 
 clean: clean-target clean-native clean-java clean-tests
 
-$(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED) $(SQLITE_SOURCE)/sqlite3.c $(SQLITE_SOURCE)/sqlite3.h
+$(SQLITE_OUT)/sqlite3.o: $(SQLITE_UNPACKED) $(SQLITE_SOURCE)/sqlite3.c $(SQLITE_SOURCE)/sqlite3.h
 	id
 	@mkdir -p $(@D)
 	cp $(SQLITE_SOURCE)/* $(SQLITE_OUT)/
