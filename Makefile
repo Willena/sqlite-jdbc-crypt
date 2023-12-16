@@ -96,6 +96,7 @@ $(SQLITE_OUT)/sqlite3.o: $(SQLITE_UNPACKED) $(SQLITE_SOURCE)/sqlite3.c $(SQLITE_
 	-DSQLITE_ENABLE_JSON1 \
 	-DSQLITE_ENABLE_STAT4 \
 	-DSQLITE_ENABLE_DBSTAT_VTAB \
+	-DSQLITE_ENABLE_MATH_FUNCTIONS \
 	-DSQLITE_THREADSAFE=1 \
 	-DSQLITE_DEFAULT_MEMSTATUS=0 \
 	-DSQLITE_DEFAULT_FILE_PERMISSIONS=0666 \
@@ -107,7 +108,6 @@ $(SQLITE_OUT)/sqlite3.o: $(SQLITE_UNPACKED) $(SQLITE_SOURCE)/sqlite3.c $(SQLITE_
 	-DSQLITE_MAX_FUNCTION_ARG=127 \
 	-DSQLITE_MAX_ATTACHED=125 \
 	-DSQLITE_MAX_PAGE_COUNT=4294967294 \
-	-DSQLITE_ENABLE_MATH_FUNCTIONS=1 \
 	-DSQLITE_ENABLE_REGEXP=1 \
 	-DSQLITE_ENABLE_VSV=1 \
 	-DCODEC_TYPE=CODEC_TYPE_CHACHA20 \
@@ -152,7 +152,6 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
-# native-all: native win32 win64 win-armv7 win-arm64 mac64-signed mac-arm64-signed linux32 linux64 freebsd32 freebsd64 freebsd-arm64 linux-arm linux-armv6 linux-armv7 linux-arm64 linux-android-arm linux-android-arm64 linux-android-x86 linux-android-x64 linux-ppc64 linux-musl32 linux-musl64 linux-musl-arm64
 native-all: native win32 win64 win-armv7 win-arm64 mac64-signed mac-arm64-signed linux32 linux64 freebsd32 freebsd64 freebsd-arm64 linux-arm linux-armv6 linux-armv7 linux-arm64 linux-android-arm linux-android-arm64 linux-android-x86 linux-android-x64 linux-ppc64 linux-musl32 linux-musl64 linux-musl-arm64
 
 native: $(NATIVE_DLL)
