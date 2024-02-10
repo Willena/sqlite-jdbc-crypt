@@ -1,5 +1,5 @@
 = SQLite JDBC Driver
-:project-version: 3.45.0.0
+:project-version: 3.45.1.0
 
 image:https://img.shields.io/github/actions/workflow/status/willena/sqlite-jdbc-crypt/ci.yml?branch=master[GitHub Workflow Status (branch),link=https://github.com/willena/sqlite-jdbc/actions/workflows/ci.yml?query=branch%3Amaster]
 image:https://maven-badges.herokuapp.com/maven-central/io.github.willena/sqlite-jdbc/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/io.github.willena/sqlite-jdbc/]
