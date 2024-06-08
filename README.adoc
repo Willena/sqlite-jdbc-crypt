@@ -1,5 +1,5 @@
 = SQLite JDBC Driver
-:project-version: 3.45.3.0
+:project-version: 3.46.0.0
 
 image:https://img.shields.io/github/actions/workflow/status/willena/sqlite-jdbc-crypt/ci.yml?branch=master[GitHub Workflow Status (branch),link=https://github.com/willena/sqlite-jdbc/actions/workflows/ci.yml?query=branch%3Amaster]
 image:https://maven-badges.herokuapp.com/maven-central/io.github.willena/sqlite-jdbc/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/io.github.willena/sqlite-jdbc/]
@@ -62,7 +62,7 @@ id = 2
     {
       public static void main(String[] args)
       {
-        // NOTE: Connection and Statement are AutoClosable.
+        // NOTE: Connection and Statement are AutoCloseable.
         //       Don't forget to close them both in order to avoid leaks.
         try
         (
