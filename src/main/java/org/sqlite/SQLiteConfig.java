@@ -29,7 +29,6 @@ import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * SQLite Configuration
@@ -676,8 +675,6 @@ public class SQLiteConfig {
         public final String getPragmaName() {
             return pragmaName;
         }
-
-
     }
 
     /**
