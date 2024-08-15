@@ -393,7 +393,9 @@ public class SQLiteConfig {
         return result;
     }
 
-    private static final String[] OnOff = new String[] {"true", "false"};
+    static class OnOff {
+        private static final String[] Values = new String[] {"true", "false"};
+    }
 
     /** @return true if explicit read only transactions are enabled */
     public boolean isExplicitReadOnly() {
@@ -413,11 +415,14 @@ public class SQLiteConfig {
 
         // Parameters requiring SQLite3 API invocation
         OPEN_MODE("open_mode", "Database open-mode flag", null),
-        SHARED_CACHE("shared_cache", "Enable SQLite Shared-Cache mode, native driver only", OnOff),
+        SHARED_CACHE(
+                "shared_cache",
+                "Enable SQLite Shared-Cache mode, native driver only",
+                OnOff.Values),
         LOAD_EXTENSION(
                 "enable_load_extension",
                 "Enable SQLite load_extension() function, native driver only",
-                OnOff),
+                OnOff.Values),
         CACHE(
                 "cache",
                 "Enable SQLite Shared-Cache mode (connection)",
@@ -435,24 +440,25 @@ public class SQLiteConfig {
         CASE_SENSITIVE_LIKE(
                 "case_sensitive_like",
                 "Installs a new application-defined LIKE function that is either case sensitive or insensitive depending on the value",
-                OnOff),
-        COUNT_CHANGES("count_changes", "Deprecated", OnOff),
+                OnOff.Values),
+        COUNT_CHANGES("count_changes", "Deprecated", OnOff.Values),
         DEFAULT_CACHE_SIZE("default_cache_size", "Deprecated", null),
         DEFER_FOREIGN_KEYS(
                 "defer_foreign_keys",
                 "When the defer_foreign_keys PRAGMA is on, enforcement of all foreign key constraints is delayed until the outermost transaction is committed. The defer_foreign_keys pragma defaults to OFF so that foreign key constraints are only deferred if they are created as \"DEFERRABLE INITIALLY DEFERRED\". The defer_foreign_keys pragma is automatically switched off at each COMMIT or ROLLBACK. Hence, the defer_foreign_keys pragma must be separately enabled for each transaction. This pragma is only meaningful if foreign key constraints are enabled, of course.",
-                OnOff),
-        EMPTY_RESULT_CALLBACKS("empty_result_callback", "Deprecated", OnOff),
+                OnOff.Values),
+        EMPTY_RESULT_CALLBACKS("empty_result_callback", "Deprecated", OnOff.Values),
         ENCODING(
                 "encoding",
                 "Set the encoding that the main database will be created with if it is created by this session",
                 toStringArray(Encoding.values())),
-        FOREIGN_KEYS("foreign_keys", "Set the enforcement of foreign key constraints", OnOff),
-        FULL_COLUMN_NAMES("full_column_names", "Deprecated", OnOff),
+        FOREIGN_KEYS(
+                "foreign_keys", "Set the enforcement of foreign key constraints", OnOff.Values),
+        FULL_COLUMN_NAMES("full_column_names", "Deprecated", OnOff.Values),
         FULL_SYNC(
                 "fullsync",
                 "Whether or not the F_FULLFSYNC syncing method is used on systems that support it. Only Mac OS X supports F_FULLFSYNC.",
-                OnOff),
+                OnOff.Values),
         AUTO_VACUUM("auto_vacuum", "Auto vacuum option", toStringArray(AutoVacuum.values())),
         INCREMENTAL_VACUUM(
                 "incremental_vacuum",
@@ -466,8 +472,8 @@ public class SQLiteConfig {
                 "journal_size_limit",
                 "Limit the size of rollback-journal and WAL files left in the file-system after transactions or checkpoints",
                 null),
-        LEGACY_ALTER_TABLE("legacy_alter_table", "Use legacy alter table behavior", OnOff),
-        LEGACY_FILE_FORMAT("legacy_file_format", "No-op", OnOff),
+        LEGACY_ALTER_TABLE("legacy_alter_table", "Use legacy alter table behavior", OnOff.Values),
+        LEGACY_FILE_FORMAT("legacy_file_format", "No-op", OnOff.Values),
         LOCKING_MODE(
                 "locking_mode",
                 "Set the database connection locking-mode",
@@ -478,17 +484,18 @@ public class SQLiteConfig {
                 null),
         MAX_PAGE_COUNT(
                 "max_page_count", "Set the maximum number of pages in the database file", null),
-        READ_UNCOMMITTED("read_uncommitted", "Set READ UNCOMMITTED isolation", OnOff),
-        RECURSIVE_TRIGGERS("recursive_triggers", "Set the recursive trigger capability", OnOff),
+        READ_UNCOMMITTED("read_uncommitted", "Set READ UNCOMMITTED isolation", OnOff.Values),
+        RECURSIVE_TRIGGERS(
+                "recursive_triggers", "Set the recursive trigger capability", OnOff.Values),
         REVERSE_UNORDERED_SELECTS(
                 "reverse_unordered_selects",
                 "When enabled, this PRAGMA causes many SELECT statements without an ORDER BY clause to emit their results in the reverse order from what they normally would",
-                OnOff),
+                OnOff.Values),
         SECURE_DELETE(
                 "secure_delete",
                 "When secure_delete is on, SQLite overwrites deleted content with zeros",
                 new String[] {"true", "false", "fast"}),
-        SHORT_COLUMN_NAMES("short_column_names", "Deprecated", OnOff),
+        SHORT_COLUMN_NAMES("short_column_names", "Deprecated", OnOff.Values),
         SYNCHRONOUS(
                 "synchronous",
                 "Set the \"synchronous\" flag",
@@ -628,7 +635,7 @@ public class SQLiteConfig {
         MC_USE_SQL_INTERFACE(
                 "mc_use_sql_interface",
                 "Set if the SQL interface for SQLiteMC commands must be used",
-                OnOff);
+                OnOff.Values);
 
         public final String pragmaName;
         public final String[] choices;
@@ -648,7 +655,21 @@ public class SQLiteConfig {
             this.choices = choices;
         }
 
-        static final Set<String> pragmaSet = new TreeSet<String>();
+        /**
+         * Convert the given enum values to a string array
+         *
+         * @param list Array if PragmaValue.
+         * @return String array of Enum values
+         */
+        private static String[] toStringArray(PragmaValue[] list) {
+            String[] result = new String[list.length];
+            for (int i = 0; i < list.length; i++) {
+                result[i] = list[i].getValue();
+            }
+            return result;
+        }
+
+        static final Set<String> pragmaSet = new TreeSet<>();
 
         static {
             for (SQLiteConfig.Pragma pragma : SQLiteConfig.Pragma.values()) {
@@ -818,20 +839,6 @@ public class SQLiteConfig {
         public String getValue();
     }
 
-    /**
-     * Convert the given enum values to a string array
-     *
-     * @param list Array if PragmaValue.
-     * @return String array of Enum values
-     */
-    private static String[] toStringArray(PragmaValue[] list) {
-        String[] result = new String[list.length];
-        for (int i = 0; i < list.length; i++) {
-            result[i] = list[i].getValue();
-        }
-        return result;
-    }
-
     public enum Encoding implements PragmaValue {
         UTF8("'UTF-8'"),
         UTF16("'UTF-16'"),
@@ -874,7 +881,7 @@ public class SQLiteConfig {
         }
     }
 
-    public static enum AutoVacuum implements PragmaValue {
+    public enum AutoVacuum implements PragmaValue {
         NONE,
         FULL,
         INCREMENTAL;
@@ -884,7 +891,7 @@ public class SQLiteConfig {
         }
     }
 
-    public static enum Cache implements PragmaValue {
+    public enum Cache implements PragmaValue {
         PRIVATE,
         SHARED;
 
