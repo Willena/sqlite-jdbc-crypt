@@ -239,11 +239,7 @@ public class SQLiteConfig {
         orderedPragmaTable.add(Pragma.PAGE_SIZE.getPragmaName());
         orderedPragmaTable.add(Pragma.AUTO_VACUUM.getPragmaName());
         orderedPragmaTable.add(Pragma.ENCODING.getPragmaName());
-        for (Object item : pragmaTable.keySet()) {
-            if (!orderedPragmaTable.contains(item)) {
-                orderedPragmaTable.add(item);
-            }
-        }
+        orderedPragmaTable.addAll(pragmaTable.keySet());
         try (Statement stat = conn.createStatement()) {
             for (Object each : orderedPragmaTable) {
                 String key = each.toString();
@@ -411,7 +407,7 @@ public class SQLiteConfig {
         this.explicitReadOnly = readOnly;
     }
 
-    public static enum Pragma {
+    public enum Pragma {
 
         // Parameters requiring SQLite3 API invocation
         OPEN_MODE("open_mode", "Database open-mode flag", null),
@@ -669,11 +665,11 @@ public class SQLiteConfig {
             return result;
         }
 
-        static final Set<String> pragmaSet = new TreeSet<>();
+        static final Set<String> pragmaNameSet = new TreeSet<>();
 
         static {
             for (SQLiteConfig.Pragma pragma : SQLiteConfig.Pragma.values()) {
-                pragmaSet.add(pragma.pragmaName);
+                pragmaNameSet.add(pragma.pragmaName);
             }
         }
 
@@ -681,11 +677,7 @@ public class SQLiteConfig {
             return pragmaName;
         }
 
-        public static Set<String> pragmaNameSet() {
-            return Arrays.stream(Pragma.class.getEnumConstants())
-                    .map(p -> p.pragmaName)
-                    .collect(Collectors.toSet());
-        }
+
     }
 
     /**
@@ -835,8 +827,8 @@ public class SQLiteConfig {
      *
      * @author leo
      */
-    private static interface PragmaValue {
-        public String getValue();
+    private interface PragmaValue {
+        String getValue();
     }
 
     public enum Encoding implements PragmaValue {

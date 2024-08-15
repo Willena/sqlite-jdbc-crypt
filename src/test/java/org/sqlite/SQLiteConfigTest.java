@@ -61,6 +61,6 @@ public class SQLiteConfigTest {
             expectedPragmaSet.add(v.pragmaName);
         }
 
-        assertThat(SQLiteConfig.pragmaSet).isEqualTo(expectedPragmaSet);
+        assertThat(Pragma.pragmaNameSet).isEqualTo(expectedPragmaSet);
     }
 }

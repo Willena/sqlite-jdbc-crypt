@@ -526,7 +526,7 @@ public abstract class SQLiteConnection implements Connection {
         int nonPragmaCount = 0;
         String[] parameters = filename.substring(parameterDelimiter + 1).split("&");
 
-        Set<String> pragmaSet = SQLiteConfig.Pragma.pragmaNameSet();
+        Set<String> pragmaSet = SQLiteConfig.Pragma.pragmaNameSet;
 
         for (int i = 0; i < parameters.length; i++) {
             // process parameters in reverse-order, last specified pragma value wins
