@@ -233,6 +233,22 @@ Here is what you need to know.
 4. Change the key to `null` using`PRAGMA rekey=''`
 5. Use normally
 
+## Generated keys
+
+SQLite has limited support to retrieve generated keys, using [last_insert_rowid](https://www.sqlite.org/c3ref/last_insert_rowid.html), with the following limitations:
+- a single ID can be retrieved, even if multiple rows were added or updated
+- it needs to be called right after the statement
+
+By default the driver will eagerly retrieve the generated keys after each statement, which may impact performances.
+
+You can disable the retrieval of generated keys in 3 ways:
+- via `SQLiteDataSource#setGetGeneratedKeys(false)`
+- via `SQLiteConnectionConfig#setGetGeneratedKeys(false)`:
+- using the pragma `jdbc.get_generated_keys`:
+```java
+try (Connection connection = DriverManager.getConnection("jdbc:sqlite::memory:?jdbc.get_generated_keys=false")) { /*...*/ }
+```
+
 ## Explicit read only transactions (use with Hibernate)
 
 In order for the driver to be compliant with Hibernate, it needs to allow setting the read only flag after a connection has been created.
