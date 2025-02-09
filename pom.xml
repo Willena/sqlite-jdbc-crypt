@@ -14,7 +14,7 @@
         <junit.version>5.11.4</junit.version>
         <surefire.version>3.5.2</surefire.version>
         <archunit.version>1.3.0</archunit.version>
-        <graalvm.version>24.1.1</graalvm.version>
+        <graalvm.version>24.1.2</graalvm.version>
         <java9.sourceDirectory>${project.basedir}/src/main/java9</java9.sourceDirectory>
     </properties>
 
@@ -439,7 +439,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.26.3</version>
+            <version>3.27.3</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -461,7 +461,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.14.2</version>
+            <version>5.15.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
