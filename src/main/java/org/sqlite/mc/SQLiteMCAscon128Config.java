@@ -4,7 +4,7 @@ public class SQLiteMCAscon128Config extends SQLiteMCConfig.Builder {
 
     public SQLiteMCAscon128Config() {
         super();
-        setCipher(CipherAlgorithm.RC4);
+        setCipher(CipherAlgorithm.ASCON128);
     }
 
     @Override

@@ -14,7 +14,7 @@ public enum SQLiteConfigFactory {
     SQLITE_MC_CONFIG(SQLiteMCConfig.class.getName()) {
         @Override
         public SQLiteConfig fromProperties(Properties properties) {
-            return new SQLiteMCConfig(properties);
+            return new SQLiteMCConfig.Builder(properties).build();
         }
     };
 

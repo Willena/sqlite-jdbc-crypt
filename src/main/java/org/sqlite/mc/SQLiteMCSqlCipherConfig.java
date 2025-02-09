@@ -7,62 +7,77 @@ public class SQLiteMCSqlCipherConfig extends SQLiteMCConfig.Builder {
         setCipher(CipherAlgorithm.SQL_CIPHER);
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setLegacy(int value) {
-        assert isValid(value, 0, 4);
+        if (!isValid(value, 0, 4)) {
+            throw new IllegalArgumentException("Legacy must be between 0 and 4");
+        }
         super.setLegacy(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setLegacyPageSize(int value) {
-        assert isValid(value, 0, 65536);
         super.setLegacyPageSize(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setKdfIter(int value) {
-        assert isValid(value, 1, Integer.MAX_VALUE);
+        if (!isValid(value, 1, Integer.MAX_VALUE)) {
+            throw new IllegalArgumentException("KdfIter must be a positive integer");
+        }
         super.setKdfIter(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setFastKdfIter(int value) {
-        assert isValid(value, 1, Integer.MAX_VALUE);
+        if (!isValid(value, 1, Integer.MAX_VALUE)) {
+            throw new IllegalArgumentException("FastKdfIter must be a positive integer");
+        }
         super.setFastKdfIter(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setHmacUse(boolean value) {
         super.setHmacUse(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setHmacPgno(HmacPgno value) {
-        assert isValid(value.ordinal(), 0, 2);
         super.setHmacPgno(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setHmacSaltMask(int value) {
-        assert isValid(value, 0, 255);
+        if (!isValid(value, 0, 255)) {
+            throw new IllegalArgumentException("HmacSaltMask must be between 0 and 255");
+        }
         super.setHmacSaltMask(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setKdfAlgorithm(KdfAlgorithm value) {
-        assert isValid(value.ordinal(), 0, 2);
         super.setKdfAlgorithm(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setHmacAlgorithm(HmacAlgorithm value) {
-        assert isValid(value.ordinal(), 0, 2);
         super.setHmacAlgorithm(value);
         return this;
     }
 
+    @Override
     public SQLiteMCSqlCipherConfig setPlaintextHeaderSize(int value) {
-        assert isValid(value, 0, 100);
-        assert value % 16 == 0; // Must be multiple of 16
+        if (!isValid(value, 0, 100) || value % 16 != 0) {
+            throw new IllegalArgumentException("PlainTextHeaderSize must be a multiple of 16 and between 0 and 100");
+        }
         super.setPlaintextHeaderSize(value);
         return this;
     }
@@ -101,7 +116,17 @@ public class SQLiteMCSqlCipherConfig extends SQLiteMCConfig.Builder {
     }
 
     public static SQLiteMCSqlCipherConfig getDefault() {
-        return new SQLiteMCSqlCipherConfig();
+        return new SQLiteMCSqlCipherConfig()
+                .setKdfIter(256000)
+                .setFastKdfIter(2)
+                .setHmacUse(true)
+                .setHmacPgno(HmacPgno.LITTLE_ENDIAN)
+                .setHmacSaltMask(0x3a)
+                .setLegacy(0)
+                .setLegacyPageSize(4096)
+                .setKdfAlgorithm(KdfAlgorithm.SHA512)
+                .setHmacAlgorithm(HmacAlgorithm.SHA512)
+                .setPlaintextHeaderSize(0);
     }
 
     public static SQLiteMCSqlCipherConfig getV1Defaults() {

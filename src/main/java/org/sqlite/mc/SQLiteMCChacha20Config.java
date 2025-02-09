@@ -8,19 +8,25 @@ public class SQLiteMCChacha20Config extends SQLiteMCConfig.Builder {
     }
 
     public SQLiteMCChacha20Config setLegacy(int value) {
-        assert isValid(value, 0, 4);
+        if (!isValid(value, 0, 4)) {
+            throw new IllegalArgumentException("Legacy must be between 0 and 4");
+        }
         super.setLegacy(value);
         return this;
     }
 
     public SQLiteMCChacha20Config setLegacyPageSize(int value) {
-        assert isValid(value, 0, 65536);
+        if (!isValid(value, 0, 65536)) {
+            throw new IllegalArgumentException("LegacyPageSize must be between 0 and 65536");
+        }
         super.setLegacyPageSize(value);
         return this;
     }
 
     public SQLiteMCChacha20Config setKdfIter(int value) {
-        assert isValid(value, 1, Integer.MAX_VALUE);
+        if (!isValid(value, 1, Integer.MAX_VALUE)) {
+            throw new IllegalArgumentException("LegacyPageSize must be a positive number");
+        }
         super.setKdfIter(value);
         return this;
     }

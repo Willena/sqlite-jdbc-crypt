@@ -9,14 +9,15 @@ public class SQLiteMCWxAES128Config extends SQLiteMCConfig.Builder {
 
     @Override
     public SQLiteMCWxAES128Config setLegacy(int value) {
-        assert isValid(value, 0, 1);
+        if (!isValid(value, 0, 1)) {
+            throw new IllegalArgumentException("Legacy must be 0 or 1");
+        }
         super.setLegacy(value);
         return this;
     }
 
     @Override
     public SQLiteMCWxAES128Config setLegacyPageSize(int value) {
-        assert isValid(value, 0, 65536);
         super.setLegacyPageSize(value);
         return this;
     }

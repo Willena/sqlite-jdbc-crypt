@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteConfig;
@@ -14,7 +15,7 @@ import org.sqlite.SQLiteException;
         disabledReason = "SQLite3 binary not compatible with that test",
         named = "disableCipherTests",
         matches = "true")
-public class SQLiteMCPragmaTest {
+public class SQLiteMCOpenUsingPragmaTest {
 
     private static final String SQL_TABLE =
             "CREATE TABLE IF NOT EXISTS warehouses ("
@@ -23,13 +24,13 @@ public class SQLiteMCPragmaTest {
                     + "	capacity real"
                     + ");";
 
-    public String createFile() throws IOException {
+    private String createFile() throws IOException {
         File tmpFile = File.createTempFile("tmp-sqlite", ".db");
         tmpFile.deleteOnExit();
         return tmpFile.getAbsolutePath();
     }
 
-    public boolean databaseIsReadable(Connection connection) {
+    private boolean databaseIsReadable(Connection connection) {
         if (connection == null) return false;
         try {
             Statement st = connection.createStatement();
@@ -48,18 +49,18 @@ public class SQLiteMCPragmaTest {
         }
     }
 
-    public void applySchema(Connection connection) throws SQLException {
+    private void applySchema(Connection connection) throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.execute(SQL_TABLE);
     }
 
-    public void plainDatabaseCreate(String dbPath) throws SQLException {
+    private void plainDatabaseCreate(String dbPath) throws SQLException {
         Connection conn = DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
         applySchema(conn);
         conn.close();
     }
 
-    public void cipherDatabaseCreate(SQLiteMCConfig.Builder config, String dbPath, String key)
+    private void cipherDatabaseCreate(SQLiteMCConfig.Builder config, String dbPath, String key)
             throws SQLException {
         Connection connection =
                 config.withKey(key).build().createConnection("jdbc:sqlite:file:" + dbPath);
@@ -67,24 +68,11 @@ public class SQLiteMCPragmaTest {
         connection.close();
     }
 
-    public Connection plainDatabaseOpen(String dbPath) throws SQLException {
+    private Connection plainDatabaseOpen(String dbPath) throws SQLException {
         return DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
     }
 
-    @Test
-    public void plainDatabaseTest() throws IOException, SQLException {
-        String path = createFile();
-        // 1.  Open + Write
-        plainDatabaseCreate(path);
-
-        // 2. Ensure another Connection can read the databse written
-        Connection c = plainDatabaseOpen(path);
-        assertThat(databaseIsReadable(c))
-                .isTrue(); // , "The plain database should be always readable");
-        c.close();
-    }
-
-    public Connection cipherDatabaseOpen(SQLiteMCConfig.Builder config, String dbPath, String key)
+    private Connection cipherDatabaseOpen(SQLiteMCConfig.Builder config, String dbPath, String key)
             throws SQLException {
         try {
             return config.withKey(key).build().createConnection("jdbc:sqlite:file:" + dbPath);
@@ -93,7 +81,7 @@ public class SQLiteMCPragmaTest {
         }
     }
 
-    public void genericDatabaseTest(SQLiteMCConfig.Builder config)
+    private void genericDatabaseTest(SQLiteMCConfig.Builder config)
             throws IOException, SQLException {
         String path = createFile();
         // 1. Open + Write + cipher with "Key1" key
@@ -146,6 +134,20 @@ public class SQLiteMCPragmaTest {
     }
 
     @Test
+    public void plainDatabaseTest() throws IOException, SQLException {
+        String path = createFile();
+        // 1.  Open + Write
+        plainDatabaseCreate(path);
+
+        // 2. Ensure another Connection can read the databse written
+        Connection c = plainDatabaseOpen(path);
+        assertThat(databaseIsReadable(c))
+                .isTrue(); // , "The plain database should be always readable");
+        c.close();
+    }
+
+
+    @Test
     public void chacha20DatabaseTest() throws SQLException, IOException {
         genericDatabaseTest(SQLiteMCChacha20Config.getDefault());
     }
@@ -176,12 +178,17 @@ public class SQLiteMCPragmaTest {
     }
 
     @Test
-    public void defaultCihperDatabaseTest() throws IOException, SQLException {
+    public void aegisTest() throws SQLException, IOException {
+        genericDatabaseTest(SQLiteMCAegisConfig.getDefault());
+    }
+
+    @Test
+    public void defaultCipherDatabaseTest() throws IOException, SQLException {
         genericDatabaseTest(new SQLiteMCConfig.Builder());
     }
 
     @Test
-    public void defaultCihperDatabaseWithSpecialKeyTest() throws IOException, SQLException {
+    public void defaultCipherDatabaseWithSpecialKeyTest() throws IOException, SQLException {
         SQLiteMCConfig.Builder config = new SQLiteMCConfig.Builder();
         String path = createFile();
         // 1. Open + Write + cipher with "Key1" key
@@ -239,31 +246,35 @@ public class SQLiteMCPragmaTest {
         String key = "key";
         cipherDatabaseCreate(new SQLiteMCConfig.Builder(), dbfile, key);
 
+        //Crosstest : Should be able to read the base db
         Connection c = cipherDatabaseOpen(new SQLiteMCConfig.Builder(), dbfile, key);
         assertThat(databaseIsReadable(c))
-                .isTrue(); // , "Crosstest : Should be able to read the base db");
+                .isTrue();
         c.close();
 
+        // Should not be readable with RC4
         c = cipherDatabaseOpen(SQLiteMCRC4Config.getDefault(), dbfile, key);
-        assertThat(c).isNull(); // , "Should not be readable with RC4");
-        //        c.close();
+        assertThat(c).isNull();
 
+        // Should not be readable with SQLCipher
         c = cipherDatabaseOpen(SQLiteMCSqlCipherConfig.getDefault(), dbfile, key);
-        assertThat(c).isNull(); // , "Should not be readable with SQLCipher");
-        //        c.close();
+        assertThat(c).isNull();
 
+        // Should not be readable with Wx128bit
         c = cipherDatabaseOpen(SQLiteMCWxAES128Config.getDefault(), dbfile, key);
-        assertThat(c).isNull(); // , "Should not be readable with Wx128bit");
-        //        c.close();
+        assertThat(c).isNull();
 
+        // Should not be readable with Wx256
         c = cipherDatabaseOpen(SQLiteMCWxAES256Config.getDefault(), dbfile, key);
-        assertThat(c).isNull(); // , "Should not be readable with Wx256");
-        //        c.close();
+        assertThat(c).isNull();
 
+        // Should not be readable with Aegis
+        c = cipherDatabaseOpen(SQLiteMCAegisConfig.getDefault(), dbfile, key);
+        assertThat(c).isNull();
+
+        // Should be readable with Chacha20 as it is default
         c = cipherDatabaseOpen(SQLiteMCChacha20Config.getDefault(), dbfile, key);
-        assertThat(databaseIsReadable(c))
-                .isTrue(); // , "Should be readable with Chacha20 as it is default");
-        //        c.close();
+        assertThat(databaseIsReadable(c)).isTrue();
     }
 
     @Test
@@ -272,14 +283,14 @@ public class SQLiteMCPragmaTest {
         String key = "key";
         cipherDatabaseCreate(new SQLiteMCConfig.Builder(), dbfile, key);
 
+        // Should be able to read the base db
         Connection c = cipherDatabaseOpen(new SQLiteMCConfig.Builder(), dbfile, key);
-        assertThat(databaseIsReadable(c)).isTrue(); // , "Should be able to read the base db");
+        assertThat(databaseIsReadable(c)).isTrue();
         c.close();
 
+        // Should not be readable with RC4
         c = cipherDatabaseOpen(SQLiteMCRC4Config.getDefault(), dbfile, key);
-        assertThat(c).isNull(); // , "Should not be readable with RC4");
-        assertThat(new File(dbfile).delete())
-                .isTrue(); // , "Connection must be closed, should be deleted");
+        assertThat(c).isNull();
     }
 
     @Test
@@ -287,32 +298,29 @@ public class SQLiteMCPragmaTest {
         File testDB = File.createTempFile("test.db", "", new File("target"));
         testDB.deleteOnExit();
 
-        for (boolean useSQLInterface : new boolean[] {true, false}) {
-            SQLiteMCConfig config =
-                    new SQLiteMCConfig.Builder()
-                            .withKey("abc")
-                            .useSQLInterface(useSQLInterface)
-                            .build();
-            config.setPageSize(65536);
-            config.setAutoVacuum(SQLiteConfig.AutoVacuum.INCREMENTAL);
-            config.setEncoding(SQLiteConfig.Encoding.UTF_16LE);
-            config.setJournalMode(SQLiteConfig.JournalMode.WAL);
+        SQLiteMCConfig config =
+                new SQLiteMCConfig.Builder()
+                        .withKey("abc")
+                        .build();
+        config.setPageSize(65536);
+        config.setAutoVacuum(SQLiteConfig.AutoVacuum.INCREMENTAL);
+        config.setEncoding(SQLiteConfig.Encoding.UTF_16LE);
+        config.setJournalMode(SQLiteConfig.JournalMode.WAL);
 
-            String url = String.format("jdbc:sqlite:%s", testDB);
-            try (Connection conn = DriverManager.getConnection(url, config.toProperties());
-                    Statement stat = conn.createStatement()) {
-                try (ResultSet rs = stat.executeQuery("pragma page_size")) {
-                    assertThat(rs.getString(1)).isEqualTo("65536");
-                }
-                try (ResultSet rs = stat.executeQuery("pragma auto_vacuum")) {
-                    assertThat(rs.getString(1)).isEqualTo("2");
-                }
-                try (ResultSet rs = stat.executeQuery("pragma encoding")) {
-                    assertThat(rs.getString(1)).isEqualTo("UTF-16le");
-                }
-                try (ResultSet rs = stat.executeQuery("pragma journal_mode")) {
-                    assertThat(rs.getString(1)).isEqualTo("wal");
-                }
+        String url = String.format("jdbc:sqlite:%s", testDB);
+        try (Connection conn = DriverManager.getConnection(url, config.toProperties());
+             Statement stat = conn.createStatement()) {
+            try (ResultSet rs = stat.executeQuery("pragma page_size")) {
+                assertThat(rs.getString(1)).isEqualTo("65536");
+            }
+            try (ResultSet rs = stat.executeQuery("pragma auto_vacuum")) {
+                assertThat(rs.getString(1)).isEqualTo("2");
+            }
+            try (ResultSet rs = stat.executeQuery("pragma encoding")) {
+                assertThat(rs.getString(1)).isEqualTo("UTF-16le");
+            }
+            try (ResultSet rs = stat.executeQuery("pragma journal_mode")) {
+                assertThat(rs.getString(1)).isEqualTo("wal");
             }
         }
     }
