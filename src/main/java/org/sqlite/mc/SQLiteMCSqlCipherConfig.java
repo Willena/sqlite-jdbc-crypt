@@ -76,7 +76,8 @@ public class SQLiteMCSqlCipherConfig extends SQLiteMCConfig.Builder {
     @Override
     public SQLiteMCSqlCipherConfig setPlaintextHeaderSize(int value) {
         if (!isValid(value, 0, 100) || value % 16 != 0) {
-            throw new IllegalArgumentException("PlainTextHeaderSize must be a multiple of 16 and between 0 and 100");
+            throw new IllegalArgumentException(
+                    "PlainTextHeaderSize must be a multiple of 16 and between 0 and 100");
         }
         super.setPlaintextHeaderSize(value);
         return this;

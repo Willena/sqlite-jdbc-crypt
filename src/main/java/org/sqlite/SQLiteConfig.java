@@ -633,18 +633,22 @@ public class SQLiteConfig {
                 "plaintext_header_size",
                 "Allows to configure the cipher scheme to keep the database header partially unencrypted",
                 null),
-         TCOST("tcost",
-                 "Allows to specify the number of iterations used to derive the key material with the Argon2id function.",
-                 null),
-         MCOST("mcost",
-                 "Allows to specify the amount of memory used to derive the key material with the Argon2id function. The amount is specified as the number of kB memory blocks.",
-                 null),
-         PCOST("pcost",
-                 "Allows to modify the parallelism aka the number of threads used to derive the key material with the Argon2id function. The value corresponds to the hash algoritm for HMAC calculation" ,
-                 null),
-         ALGORITHM("algorithm",
-                 "Allows to modify the AEGIS algorithm variant used for encryption",
-                 null);
+        TCOST(
+                "tcost",
+                "Allows to specify the number of iterations used to derive the key material with the Argon2id function.",
+                null),
+        MCOST(
+                "mcost",
+                "Allows to specify the amount of memory used to derive the key material with the Argon2id function. The amount is specified as the number of kB memory blocks.",
+                null),
+        PCOST(
+                "pcost",
+                "Allows to modify the parallelism aka the number of threads used to derive the key material with the Argon2id function. The value corresponds to the hash algoritm for HMAC calculation",
+                null),
+        ALGORITHM(
+                "algorithm",
+                "Allows to modify the AEGIS algorithm variant used for encryption",
+                null);
 
         public final String pragmaName;
         public final String[] choices;

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.sqlite.SQLiteConfig.Pragma.LEGACY_PAGE_SIZE;
 
 import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConfigFactory;
@@ -42,7 +41,7 @@ class SQLiteMCConfigTest {
 
     @Test
     void toHexString() {
-        assertThat(SQLiteMCConfig.Builder.toHexString(new byte[]{12})).isEqualTo("0c");
+        assertThat(SQLiteMCConfig.Builder.toHexString(new byte[] {12})).isEqualTo("0c");
     }
 
     @Test
@@ -56,8 +55,10 @@ class SQLiteMCConfigTest {
 
     @Test
     void setPlaintextHeaderSize() {
-        Properties props = new SQLiteMCConfig.Builder().setPlaintextHeaderSize(12).build().toProperties();
-        assertThat(props.get(SQLiteConfig.Pragma.PLAINTEXT_HEADER_SIZE.getPragmaName())).isEqualTo("12");
+        Properties props =
+                new SQLiteMCConfig.Builder().setPlaintextHeaderSize(12).build().toProperties();
+        assertThat(props.get(SQLiteConfig.Pragma.PLAINTEXT_HEADER_SIZE.getPragmaName()))
+                .isEqualTo("12");
     }
 
     @Test
@@ -74,7 +75,11 @@ class SQLiteMCConfigTest {
 
     @Test
     void setKdfAlgorithm() {
-        Properties props = new SQLiteMCConfig.Builder().setKdfAlgorithm(KdfAlgorithm.SHA512).build().toProperties();
+        Properties props =
+                new SQLiteMCConfig.Builder()
+                        .setKdfAlgorithm(KdfAlgorithm.SHA512)
+                        .build()
+                        .toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.KDF_ALGORITHM.getPragmaName())).isEqualTo("2");
     }
 
@@ -92,13 +97,21 @@ class SQLiteMCConfigTest {
 
     @Test
     void setHmacPgno() {
-        Properties props = new SQLiteMCConfig.Builder().setHmacPgno(HmacPgno.LITTLE_ENDIAN).build().toProperties();
+        Properties props =
+                new SQLiteMCConfig.Builder()
+                        .setHmacPgno(HmacPgno.LITTLE_ENDIAN)
+                        .build()
+                        .toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.HMAC_PGNO.getPragmaName())).isEqualTo("1");
     }
 
     @Test
     void setHmacAlgorithm() {
-        Properties props = new SQLiteMCConfig.Builder().setHmacAlgorithm(HmacAlgorithm.SHA512).build().toProperties();
+        Properties props =
+                new SQLiteMCConfig.Builder()
+                        .setHmacAlgorithm(HmacAlgorithm.SHA512)
+                        .build()
+                        .toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.HMAC_ALGORITHM.getPragmaName())).isEqualTo("2");
     }
 
@@ -110,7 +123,8 @@ class SQLiteMCConfigTest {
 
     @Test
     void setCipher() {
-        Properties props = new SQLiteMCConfig.Builder().setCipher(CipherAlgorithm.RC4).build().toProperties();
+        Properties props =
+                new SQLiteMCConfig.Builder().setCipher(CipherAlgorithm.RC4).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.getPragmaName())).isEqualTo("rc4");
     }
 
@@ -134,13 +148,18 @@ class SQLiteMCConfigTest {
 
     @Test
     void setAegisAlgorithm() {
-        Properties props = new SQLiteMCConfig.Builder().setAegisAlgorithm(AegisAlgorithm.AEGIS_256).build().toProperties();
+        Properties props =
+                new SQLiteMCConfig.Builder()
+                        .setAegisAlgorithm(AegisAlgorithm.AEGIS_256)
+                        .build()
+                        .toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.ALGORITHM.getPragmaName())).isEqualTo("aegis-256");
     }
 
     @Test
     void withHexKey() {
-        Properties props = new SQLiteMCConfig.Builder().withHexKey(new byte[]{1, 2}).build().toProperties();
+        Properties props =
+                new SQLiteMCConfig.Builder().withHexKey(new byte[] {1, 2}).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.HEXKEY_MODE.getPragmaName())).isEqualTo("SSE");
         assertThat(props.get(SQLiteConfig.Pragma.PASSWORD.getPragmaName())).isEqualTo("0102");
         assertThat(props.get(SQLiteConfig.Pragma.KEY.getPragmaName())).isEqualTo("0102");
@@ -162,8 +181,7 @@ class SQLiteMCConfigTest {
     @Test
     void toProperties() {
         Properties props = new SQLiteMCConfig.Builder().build().toProperties();
-        assertThat(props.get(SQLiteConfigFactory.CONFIG_CLASS_NAME)).isEqualTo("org.sqlite.mc.SQLiteMCConfig");
+        assertThat(props.get(SQLiteConfigFactory.CONFIG_CLASS_NAME))
+                .isEqualTo("org.sqlite.mc.SQLiteMCConfig");
     }
-
-
 }

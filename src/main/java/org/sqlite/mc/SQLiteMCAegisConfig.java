@@ -28,7 +28,7 @@ public class SQLiteMCAegisConfig extends SQLiteMCConfig.Builder {
     }
 
     public static SQLiteMCAegisConfig getDefault() {
-        return  new SQLiteMCAegisConfig()
+        return new SQLiteMCAegisConfig()
                 .setAegisAlgorithm(AegisAlgorithm.AEGIS_256)
                 .setTCost(2)
                 .setMCost(19456)

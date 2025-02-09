@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
-
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConfigFactory;
 
@@ -26,24 +25,24 @@ public class SQLiteMCConfig extends SQLiteConfig {
     }
 
     private static final Pragma[] CIPHER_PRAGMA_ORDER =
-            new Pragma[]{
-                    Pragma.CIPHER,
-                    Pragma.LEGACY,
-                    Pragma.HMAC_CHECK,
-                    Pragma.MC_LEGACY_WAL,
-                    Pragma.LEGACY_PAGE_SIZE,
-                    Pragma.KDF_ITER,
-                    Pragma.FAST_KDF_ITER,
-                    Pragma.HMAC_USE,
-                    Pragma.HMAC_PGNO,
-                    Pragma.HMAC_SALT_MASK,
-                    Pragma.KDF_ALGORITHM,
-                    Pragma.HMAC_ALGORITHM,
-                    Pragma.PLAINTEXT_HEADER_SIZE,
-                    Pragma.TCOST,
-                    Pragma.MCOST,
-                    Pragma.PCOST,
-                    Pragma.ALGORITHM
+            new Pragma[] {
+                Pragma.CIPHER,
+                Pragma.LEGACY,
+                Pragma.HMAC_CHECK,
+                Pragma.MC_LEGACY_WAL,
+                Pragma.LEGACY_PAGE_SIZE,
+                Pragma.KDF_ITER,
+                Pragma.FAST_KDF_ITER,
+                Pragma.HMAC_USE,
+                Pragma.HMAC_PGNO,
+                Pragma.HMAC_SALT_MASK,
+                Pragma.KDF_ALGORITHM,
+                Pragma.HMAC_ALGORITHM,
+                Pragma.PLAINTEXT_HEADER_SIZE,
+                Pragma.TCOST,
+                Pragma.MCOST,
+                Pragma.PCOST,
+                Pragma.ALGORITHM
             };
 
     private SQLiteMCConfig(Properties existingProperties) {
@@ -89,9 +88,12 @@ public class SQLiteMCConfig extends SQLiteConfig {
                 String property = pragmaTable.getProperty(pragma.getPragmaName(), null);
 
                 if (property != null) {
-                    Function<String, String> converter = CONVERTERS.getOrDefault(pragma, IDENTITY_CONVERTER);
+                    Function<String, String> converter =
+                            CONVERTERS.getOrDefault(pragma, IDENTITY_CONVERTER);
                     statement.execute(
-                            String.format("PRAGMA %s = %s", pragma.getPragmaName(), converter.apply(property)));
+                            String.format(
+                                    "PRAGMA %s = %s",
+                                    pragma.getPragmaName(), converter.apply(property)));
                 }
             }
         }

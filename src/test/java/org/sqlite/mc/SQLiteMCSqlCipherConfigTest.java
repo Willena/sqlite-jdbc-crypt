@@ -1,18 +1,16 @@
 package org.sqlite.mc;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteConfig;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledIfSystemProperty(
         disabledReason = "SQLite3 binary not compatible with that test",
@@ -48,8 +46,8 @@ class SQLiteMCSqlCipherConfigTest {
     @Test
     void setLegacy() {
         SQLiteMCSqlCipherConfig config = new SQLiteMCSqlCipherConfig();
-        assertThatThrownBy( () -> config.setLegacy(10)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy( () -> config.setLegacy(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacy(10)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacy(-1)).isInstanceOf(IllegalArgumentException.class);
 
         Properties props = config.setLegacy(1).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.LEGACY.pragmaName)).isEqualTo("1");
@@ -58,9 +56,12 @@ class SQLiteMCSqlCipherConfigTest {
     @Test
     void setLegacyPageSize() {
         SQLiteMCSqlCipherConfig config = new SQLiteMCSqlCipherConfig();
-        assertThatThrownBy( () -> config.setLegacyPageSize(3)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy( () -> config.setLegacyPageSize(-1)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy( () -> config.setLegacyPageSize(65537)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacyPageSize(3))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacyPageSize(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacyPageSize(65537))
+                .isInstanceOf(IllegalArgumentException.class);
 
         Properties props = config.setLegacyPageSize(2).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.LEGACY_PAGE_SIZE.pragmaName)).isEqualTo("2");
@@ -69,7 +70,8 @@ class SQLiteMCSqlCipherConfigTest {
     @Test
     void setKdfIter() {
         SQLiteMCSqlCipherConfig config = new SQLiteMCSqlCipherConfig();
-        assertThatThrownBy( () -> config.setKdfIter(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setKdfIter(-1))
+                .isInstanceOf(IllegalArgumentException.class);
 
         Properties props = config.setKdfIter(1).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.KDF_ITER.pragmaName)).isEqualTo("1");
@@ -78,7 +80,8 @@ class SQLiteMCSqlCipherConfigTest {
     @Test
     void setFastKdfIter() {
         SQLiteMCSqlCipherConfig config = new SQLiteMCSqlCipherConfig();
-        assertThatThrownBy( () -> config.setFastKdfIter(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setFastKdfIter(-1))
+                .isInstanceOf(IllegalArgumentException.class);
 
         Properties props = config.setFastKdfIter(1).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.FAST_KDF_ITER.pragmaName)).isEqualTo("1");
@@ -103,8 +106,10 @@ class SQLiteMCSqlCipherConfigTest {
     @Test
     void setHmacSaltMask() {
         SQLiteMCSqlCipherConfig config = new SQLiteMCSqlCipherConfig();
-        assertThatThrownBy( () -> config.setHmacSaltMask(360)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy( () -> config.setHmacSaltMask(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setHmacSaltMask(360))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setHmacSaltMask(-1))
+                .isInstanceOf(IllegalArgumentException.class);
 
         Properties props = config.setHmacSaltMask(1).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.HMAC_SALT_MASK.pragmaName)).isEqualTo("1");
@@ -129,9 +134,12 @@ class SQLiteMCSqlCipherConfigTest {
     @Test
     void setPlaintextHeaderSize() {
         SQLiteMCSqlCipherConfig config = new SQLiteMCSqlCipherConfig();
-        assertThatThrownBy( () -> config.setPlaintextHeaderSize(122)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy( () -> config.setPlaintextHeaderSize(-1)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy( () -> config.setPlaintextHeaderSize(14)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setPlaintextHeaderSize(122))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setPlaintextHeaderSize(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setPlaintextHeaderSize(14))
+                .isInstanceOf(IllegalArgumentException.class);
 
         Properties props = config.setPlaintextHeaderSize(32).build().toProperties();
         assertThat(props.get(SQLiteConfig.Pragma.PLAINTEXT_HEADER_SIZE.pragmaName)).isEqualTo("32");
@@ -213,8 +221,6 @@ class SQLiteMCSqlCipherConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.PLAINTEXT_HEADER_SIZE.pragmaName)).isEqualTo("0");
 
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("sqlcipher");
-
-
     }
 
     @Test
@@ -230,7 +236,6 @@ class SQLiteMCSqlCipherConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.HMAC_ALGORITHM.pragmaName)).isEqualTo("0");
 
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("sqlcipher");
-
     }
 
     @Test
@@ -248,7 +253,6 @@ class SQLiteMCSqlCipherConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.HMAC_ALGORITHM.pragmaName)).isEqualTo("0");
 
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("sqlcipher");
-
     }
 
     @Test
@@ -266,7 +270,6 @@ class SQLiteMCSqlCipherConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.HMAC_ALGORITHM.pragmaName)).isEqualTo("0");
 
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("sqlcipher");
-
     }
 
     @Test
@@ -285,6 +288,5 @@ class SQLiteMCSqlCipherConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.PLAINTEXT_HEADER_SIZE.pragmaName)).isEqualTo("0");
 
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("sqlcipher");
-
     }
 }

@@ -3,11 +3,9 @@ package org.sqlite.mc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigInteger;
 import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteConfig;
@@ -40,11 +38,11 @@ class SQLiteMCChacha20ConfigTest {
         return byteArray;
     }
 
-
     @Test
     void setLegacy() {
         SQLiteMCChacha20Config config = new SQLiteMCChacha20Config();
-        assertThatThrownBy(() -> config.setLegacy(5555)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacy(5555))
+                .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> config.setLegacy(-1)).isInstanceOf(IllegalArgumentException.class);
 
         config.setLegacy(1);
@@ -56,8 +54,10 @@ class SQLiteMCChacha20ConfigTest {
     @Test
     void setLegacyPageSize() {
         SQLiteMCChacha20Config config = new SQLiteMCChacha20Config();
-        assertThatThrownBy(() -> config.setLegacyPageSize(65537)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> config.setLegacyPageSize(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacyPageSize(65537))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setLegacyPageSize(-1))
+                .isInstanceOf(IllegalArgumentException.class);
 
         config.setLegacyPageSize(1);
         Properties props = config.build().toProperties();
@@ -68,7 +68,8 @@ class SQLiteMCChacha20ConfigTest {
     @Test
     void setKdfIter() {
         SQLiteMCChacha20Config config = new SQLiteMCChacha20Config();
-        assertThatThrownBy(() -> config.setKdfIter(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> config.setKdfIter(-1))
+                .isInstanceOf(IllegalArgumentException.class);
 
         config.setKdfIter(1);
         Properties props = config.build().toProperties();
@@ -106,7 +107,6 @@ class SQLiteMCChacha20ConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.KDF_ITER.pragmaName)).isEqualTo("64007");
         assertThat(props.get(SQLiteConfig.Pragma.LEGACY_PAGE_SIZE.pragmaName)).isEqualTo("4096");
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("chacha20");
-
     }
 
     @Test
@@ -118,7 +118,5 @@ class SQLiteMCChacha20ConfigTest {
         assertThat(props.get(SQLiteConfig.Pragma.KDF_ITER.pragmaName)).isEqualTo("12345");
         assertThat(props.get(SQLiteConfig.Pragma.LEGACY_PAGE_SIZE.pragmaName)).isEqualTo("4096");
         assertThat(props.get(SQLiteConfig.Pragma.CIPHER.pragmaName)).isEqualTo("chacha20");
-
     }
-
 }

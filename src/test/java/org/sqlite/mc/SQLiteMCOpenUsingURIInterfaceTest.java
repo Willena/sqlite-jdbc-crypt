@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.sql.*;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteException;
@@ -97,7 +96,6 @@ public class SQLiteMCOpenUsingURIInterfaceTest {
         assertThat(databaseIsReadable(c)).isTrue();
         c.close();
     }
-
 
     public void genericDatabaseTest(SQLiteMCConfig.Builder config)
             throws IOException, SQLException {

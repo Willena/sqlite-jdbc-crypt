@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.sqlite.SQLiteConfig;
@@ -146,7 +145,6 @@ public class SQLiteMCOpenUsingPragmaTest {
         c.close();
     }
 
-
     @Test
     public void chacha20DatabaseTest() throws SQLException, IOException {
         genericDatabaseTest(SQLiteMCChacha20Config.getDefault());
@@ -246,10 +244,9 @@ public class SQLiteMCOpenUsingPragmaTest {
         String key = "key";
         cipherDatabaseCreate(new SQLiteMCConfig.Builder(), dbfile, key);
 
-        //Crosstest : Should be able to read the base db
+        // Crosstest : Should be able to read the base db
         Connection c = cipherDatabaseOpen(new SQLiteMCConfig.Builder(), dbfile, key);
-        assertThat(databaseIsReadable(c))
-                .isTrue();
+        assertThat(databaseIsReadable(c)).isTrue();
         c.close();
 
         // Should not be readable with RC4
@@ -298,10 +295,7 @@ public class SQLiteMCOpenUsingPragmaTest {
         File testDB = File.createTempFile("test.db", "", new File("target"));
         testDB.deleteOnExit();
 
-        SQLiteMCConfig config =
-                new SQLiteMCConfig.Builder()
-                        .withKey("abc")
-                        .build();
+        SQLiteMCConfig config = new SQLiteMCConfig.Builder().withKey("abc").build();
         config.setPageSize(65536);
         config.setAutoVacuum(SQLiteConfig.AutoVacuum.INCREMENTAL);
         config.setEncoding(SQLiteConfig.Encoding.UTF_16LE);
@@ -309,7 +303,7 @@ public class SQLiteMCOpenUsingPragmaTest {
 
         String url = String.format("jdbc:sqlite:%s", testDB);
         try (Connection conn = DriverManager.getConnection(url, config.toProperties());
-             Statement stat = conn.createStatement()) {
+                Statement stat = conn.createStatement()) {
             try (ResultSet rs = stat.executeQuery("pragma page_size")) {
                 assertThat(rs.getString(1)).isEqualTo("65536");
             }
