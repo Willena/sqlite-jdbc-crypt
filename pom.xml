@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.willena</groupId>
     <artifactId>sqlite-jdbc</artifactId>
-    <version>3.50.0.0</version>
+    <version>3.50.1.0</version>
     <name>SQLite JDBC</name>
     <description>SQLite JDBC library with encryption and authentication support</description>
     <url>https://github.com/Willena/sqlite-jdbc-crypt</url>
