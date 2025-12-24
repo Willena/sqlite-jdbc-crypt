@@ -167,7 +167,7 @@ When packaging the resulting app, simply include the library in the distribution
 
 == Download
 
-Download from https://search.maven.org/artifact/io.github.willena/sqlite-jdbc[Maven Central] or from the https://github.com/willena/sqlite-jdbc-crypt/releases[releases] page.
+Download from https://central.sonatype.com/artifact/io.github.willena/sqlite-jdbc[Maven Central] or from the https://github.com/willena/sqlite-jdbc-crypt/releases[releases] page.
 
 [source,xml,subs="attributes+"]
 ----
