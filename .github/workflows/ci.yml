@@ -53,7 +53,7 @@ jobs:
           cache: 'maven'
       - name: Download and install signatures jar
         run: |
-          wget -O coreLib2.signature https://repo1.maven.org/maven2/com/toasttab/android/gummy-bears-api-24/0.14.0/gummy-bears-api-24-0.14.0-coreLib2.signature
+          wget -O coreLib2.signature https://repo1.maven.org/maven2/com/toasttab/android/gummy-bears-api-24/0.15.0/gummy-bears-api-24-0.15.0-coreLib2.signature
           mvn --batch-mode --no-transfer-progress org.apache.maven.plugins:maven-install-plugin:3.1.1:install-file -Dfile=./coreLib2.signature -DgroupId=org.sqlite.signatures -DartifactId=gummy-bears-api-24 -Dversion=0.1 -Dpackaging=signature
       - name: animal-sniffer:check
         run: mvn --batch-mode --no-transfer-progress compile animal-sniffer:check
@@ -110,7 +110,9 @@ jobs:
 #      - uses: actions/checkout@v7
       - name: Configure MSVC Environment for Windows
         if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
 #      - uses: graalvm/setup-graalvm@v1
 #        with:
 #          java-version: ${{ matrix.java }}

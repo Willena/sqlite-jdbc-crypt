@@ -14,7 +14,7 @@
         <junit.version>5.12.2</junit.version>
         <surefire.version>3.5.6</surefire.version>
         <archunit.version>1.4.2</archunit.version>
-        <graalvm.version>25.0.3</graalvm.version>
+        <graalvm.version>25.1.3</graalvm.version>
         <java9.sourceDirectory>${project.basedir}/src/main/java9</java9.sourceDirectory>
     </properties>
 
@@ -93,7 +93,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-help-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.5.2</version>
             </plugin>
 
             <plugin>
@@ -309,7 +309,7 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                     <autoPublish>true</autoPublish>
-                    <waitUntil>published</waitUntil>
+                    <waitUntil>validated</waitUntil>
                 </configuration>
             </plugin>
 
@@ -351,12 +351,12 @@
 <!--                    <signature>-->
 <!--                        <groupId>com.toasttab.android</groupId>-->
 <!--                        <artifactId>gummy-bears-api-24</artifactId>-->
-<!--                        <version>0.14.0</version>-->
+<!--                        <version>0.15.0</version>-->
 <!--                    </signature>-->
                     <!-- The animal-sniffer plugin forces the classifier to 'signature', preventing the use of the coreLib signatures: https://github.com/open-toast/gummy-bears#core-library-desugaring  -->
                     <!-- Workaround is to install the jar locally using the maven-install-plugin -->
-                    <!-- Download the file: https://repo1.maven.org/maven2/com/toasttab/android/gummy-bears-api-24/0.14.0/gummy-bears-api-24-0.14.0-coreLib2.signature -->
-                    <!-- Install: mvn org.apache.maven.plugins:maven-install-plugin:3.1.1:install-file -Dfile=./gummy-bears-api-24-0.14.0-coreLib2.signature -DgroupId=org.sqlite.signatures -DartifactId=gummy-bears-api-24 -Dversion=0.1 -Dpackaging=signature -->
+                    <!-- Download the file: https://repo1.maven.org/maven2/com/toasttab/android/gummy-bears-api-24/0.15.0/gummy-bears-api-24-0.15.0-coreLib2.signature -->
+                    <!-- Install: mvn org.apache.maven.plugins:maven-install-plugin:3.1.1:install-file -Dfile=./gummy-bears-api-24-0.15.0-coreLib2.signature -DgroupId=org.sqlite.signatures -DartifactId=gummy-bears-api-24 -Dversion=0.1 -Dpackaging=signature -->
                     <signature>
                         <groupId>org.sqlite.signatures</groupId>
                         <artifactId>gummy-bears-api-24</artifactId>
@@ -471,7 +471,7 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>1.1.3</version>
+                        <version>1.1.5</version>
                         <extensions>true</extensions>
                         <executions>
                             <execution>
